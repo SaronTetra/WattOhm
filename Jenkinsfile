@@ -9,6 +9,12 @@ pipeline {
     stage('test') {
       parallel {
         stage('test-code') {
+          agent {
+            docker {
+              image 'rust:latest'
+            }
+
+          }
           steps {
             sh 'cargo test'
             sh 'cargo install cargo-tarpaulin'
@@ -17,6 +23,12 @@ pipeline {
         }
 
         stage('lint-code') {
+          agent {
+            docker {
+              image 'rust:latest'
+            }
+
+          }
           steps {
             sh 'rustup component add rustfmt'
             sh 'cargo fmt -- --check'
@@ -26,6 +38,12 @@ pipeline {
         }
 
         stage('audit-code') {
+          agent {
+            docker {
+              image 'rust:latest'
+            }
+
+          }
           steps {
             sh 'cargo install cargo-audit'
             sh 'cargo audit'
