@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS table_name (
-  id INT(5) NOT NULL,
-  name VARCHAR(32) NOT NULL,
-  surname VARCHAR(32) NOT NULL,
-  CONSTRAINT isunique UNIQUE(id),
-  CONSTRAINT id_table PRIMARY KEY (id)
-);
