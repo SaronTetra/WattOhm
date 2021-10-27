@@ -2,26 +2,26 @@ pipeline {
   agent {
     docker {
       image 'rust:latest'
+      args '-v /var/jenkins_home/workspace:/var/jenkins_home/workspace'
     }
 
   }
   stages {
+    stage('lint-code') {
+      steps {
+        sh 'rustup --version'
+        sh 'rustc --version'
+        sh 'cargo --version'
+        sh 'rustup component add rustfmt'
+        sh 'cargo fmt -- --check'
+        sh 'rustup component add clippy'
+        sh 'cargo clippy -- -D warnings'
+      }
+    }
+
     stage('build') {
-      parallel {
-        stage('version') {
-          steps {
-            sh 'cargo --version'
-            sh 'rustup --version'
-            sh 'rustc --version'
-          }
-        }
-
-        stage('build') {
-          steps {
-            sh 'cargo build --verbose'
-          }
-        }
-
+      steps {
+        sh 'cargo build --verbose'
       }
     }
 
@@ -32,15 +32,6 @@ pipeline {
             sh 'cargo test --verbose'
             sh 'cargo install cargo-tarpaulin'
             sh 'cargo tarpaulin --ignore-tests'
-          }
-        }
-
-        stage('lint-code') {
-          steps {
-            sh 'rustup component add rustfmt'
-            sh 'cargo fmt -- --check'
-            sh 'rustup component add clippy'
-            sh 'cargo clippy -- -D warnings'
           }
         }
 
