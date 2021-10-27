@@ -6,11 +6,22 @@ pipeline {
 
   }
   stages {
-    stage('version') {
-      steps {
-        sh 'cargo --version'
-        sh 'rustup --version'
-        sh 'rustc --version'
+    stage('build') {
+      parallel {
+        stage('version') {
+          steps {
+            sh 'cargo --version'
+            sh 'rustup --version'
+            sh 'rustc --version'
+          }
+        }
+
+        stage('build') {
+          steps {
+            sh 'cargo build --verbose'
+          }
+        }
+
       }
     }
 
@@ -18,7 +29,7 @@ pipeline {
       parallel {
         stage('test-code') {
           steps {
-            sh 'cargo test'
+            sh 'cargo test --verbose'
             sh 'cargo install cargo-tarpaulin'
             sh 'cargo tarpaulin --ignore-tests'
           }
