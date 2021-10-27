@@ -6,6 +6,14 @@ pipeline {
 
   }
   stages {
+    stage('version') {
+      steps {
+        sh 'cargo --version'
+        sh 'rustup --version'
+        sh 'rustc --version'
+      }
+    }
+
     stage('test') {
       parallel {
         stage('test-code') {
