@@ -54,6 +54,12 @@ pipeline {
       }
     }
 
+    stage('end') {
+      steps {
+        echo 'Git'
+      }
+    }
+
   }
   post {
     always {
