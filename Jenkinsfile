@@ -13,14 +13,13 @@ pipeline {
         sh 'cargo --version'
         sh 'rustup component add rustfmt'
         sh 'cargo fmt -- --check'
-        sh 'rustup component add clippy'
-        sh 'cargo clippy -- -D warnings'
       }
     }
 
     stage('build') {
       steps {
         sh 'cargo build --verbose'
+        stash name: 'cargo-build', includes: 'target*'
       }
     }
 
@@ -28,6 +27,7 @@ pipeline {
       parallel {
         stage('test-code') {
           steps {
+            unstash 'cargo-build'
             sh 'cargo test --verbose'
             sh 'cargo install cargo-tarpaulin'
             sh 'cargo tarpaulin --ignore-tests'
@@ -36,11 +36,18 @@ pipeline {
 
         stage('audit-code') {
           steps {
+            unstash 'cargo-build'
             sh 'cargo install cargo-audit'
             sh 'cargo audit'
           }
         }
-
+        stage('clippy') {
+          steps {
+            unstash 'cargo-build'
+            sh 'rustup component add clippy'
+            sh 'cargo clippy -- -D warnings'
+          }
+        }
       }
     }
 
