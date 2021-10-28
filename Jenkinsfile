@@ -34,10 +34,12 @@ pipeline {
 
         stage('audit-code') {
           steps {
-            unstash 'cargo-build'
-            sh 'cargo install cargo-audit'
-            sh 'cargo audit'
-            warnError(message: 'cargo audit failed')
+            catchError(stageResult: 'UNSTABLE', buildResult: currentBuild.result) {
+              unstash 'cargo-build'
+              sh 'cargo install cargo-audit'
+              sh 'cargo audit'
+            }
+
           }
         }
 
