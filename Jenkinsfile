@@ -19,7 +19,7 @@ pipeline {
     stage('build') {
       steps {
         sh 'cargo build --verbose'
-        stash name: 'cargo-build', includes: 'target*'
+        stash name: 'cargo-build', includes: 'target/*'
       }
     }
 
