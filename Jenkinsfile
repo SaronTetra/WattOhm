@@ -29,8 +29,6 @@ pipeline {
           steps {
             unstash 'cargo-build'
             sh 'cargo test --verbose'
-            sh 'cargo install cargo-tarpaulin'
-            sh 'cargo tarpaulin --ignore-tests'
           }
         }
 
@@ -54,5 +52,14 @@ pipeline {
       }
     }
 
+  }
+  post {
+    always {
+      zulipNotification(stream: 'CI/CD')
+    }
+
+  }
+  options {
+    ansiColor('xterm')
   }
 }
