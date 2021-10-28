@@ -32,17 +32,6 @@ pipeline {
           }
         }
 
-        stage('audit-code') {
-          steps {
-            catchError(stageResult: 'UNSTABLE') {
-              unstash 'cargo-build'
-              sh 'cargo install cargo-audit'
-              sh 'cargo audit'
-            }
-
-          }
-        }
-
         stage('clippy') {
           steps {
             unstash 'cargo-build'
@@ -51,12 +40,6 @@ pipeline {
           }
         }
 
-      }
-    }
-
-    stage('end') {
-      steps {
-        echo 'Git'
       }
     }
 
