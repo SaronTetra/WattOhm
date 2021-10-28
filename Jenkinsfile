@@ -6,7 +6,7 @@ pipeline {
 
   }
   stages {
-    stage('lint-code') {
+    stage('lint') {
       steps {
         sh 'rustup --version'
         sh 'rustc --version'
@@ -19,7 +19,7 @@ pipeline {
     stage('build') {
       steps {
         sh 'cargo build --verbose'
-        stash name: 'cargo-build', includes: 'target/*'
+        stash(name: 'cargo-build', includes: 'target/*')
       }
     }
 
@@ -39,8 +39,10 @@ pipeline {
             unstash 'cargo-build'
             sh 'cargo install cargo-audit'
             sh 'cargo audit'
+            warnError(message: 'cargo audit failed')
           }
         }
+
         stage('clippy') {
           steps {
             unstash 'cargo-build'
@@ -48,6 +50,7 @@ pipeline {
             sh 'cargo clippy -- -D warnings'
           }
         }
+
       }
     }
 
