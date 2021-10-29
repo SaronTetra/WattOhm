@@ -6,34 +6,51 @@ pipeline {
 
   }
   stages {
+    stage('lint') {
+      steps {
+        sh 'rustup --version'
+        sh 'rustc --version'
+        sh 'cargo --version'
+        sh 'rustup component add rustfmt'
+        sh 'cargo fmt -- --check'
+      }
+    }
+
+    stage('build') {
+      steps {
+        sh 'cargo build --verbose'
+        stash(name: 'cargo-build', includes: 'target/*')
+      }
+    }
+
     stage('test') {
       parallel {
         stage('test-code') {
           steps {
-            sh 'cargo test'
-            sh 'cargo install cargo-tarpaulin'
-            sh 'cargo tarpaulin --ignore-tests'
+            unstash 'cargo-build'
+            sh 'cargo test --verbose'
           }
         }
 
-        stage('lint-code') {
+        stage('clippy') {
           steps {
-            sh 'rustup component add rustfmt'
-            sh 'cargo fmt -- --check'
+            unstash 'cargo-build'
             sh 'rustup component add clippy'
             sh 'cargo clippy -- -D warnings'
-          }
-        }
-
-        stage('audit-code') {
-          steps {
-            sh 'cargo install cargo-audit'
-            sh 'cargo audit'
           }
         }
 
       }
     }
 
+  }
+  post {
+    always {
+      zulipNotification(stream: 'CI/CD')
+    }
+
+  }
+  options {
+    ansiColor('xterm')
   }
 }

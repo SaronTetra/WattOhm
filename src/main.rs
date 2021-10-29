@@ -1,8 +1,7 @@
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
 // extern crate diesel
-
-
 
 #[get("/")]
 fn world() -> &'static str {
@@ -14,9 +13,7 @@ fn db(id: i32) -> String {
     format!("id:{0}", id)
 }
 
-
-
-
+#[allow(unused_must_use)]
 #[rocket::main]
 async fn main() {
     rocket::build()
