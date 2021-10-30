@@ -1,0 +1,13 @@
+.idea
+
+debug/
+target/
+.git
+.gitignore
+
+**/*.rs.bk
+
+
+
+*.pdb
+"+_
