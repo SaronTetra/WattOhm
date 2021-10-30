@@ -16,6 +16,6 @@ RUN cargo build --release --bin wattohm
 # We do not need the Rust toolchain to run the binary!
 FROM debian:bullseye-slim AS runtime
 WORKDIR app
-COPY --from=builder /app/target/release/wattohm /usr/local/bin
-EXPOSE 8000:8000
-ENTRYPOINT ["/usr/local/bin/wattohm"]
+COPY --from=builder /app/target/release/wattohm .
+COPY --from=builder /app/Rocket.toml .
+CMD ["./wattohm"]
