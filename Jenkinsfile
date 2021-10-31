@@ -63,6 +63,9 @@ pipeline {
     }
 
     stage('build-image') {
+      when {
+        branch 'master'
+      }
       steps {
         withCredentials(bindings: [usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'HUB_USER', passwordVariable: 'HUB_TOKEN')]) {
           sh '''
@@ -76,13 +79,16 @@ pipeline {
     }
 
     stage('deploy') {
+      when {
+        branch 'master'
+      }
       steps {
         withCredentials(bindings: [string(credentialsId: 'vpsIP', variable: 'VPS_IP')]) {
           sh '''
-ssh deploy@$VPS_IP "cd ~/docker/wattohm &&
-docker-compose pull &&
-docker-compose up --force-recreate -d"
-'''
+              ssh deploy@$VPS_IP "cd ~/docker/wattohm &&
+              docker-compose pull &&
+              docker-compose up --force-recreate -d"
+          '''
         }
 
       }
