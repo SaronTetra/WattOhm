@@ -37,7 +37,7 @@ start WattOhm
 ```bash
 docker run wattohm -d
 ```
-connect to Wattohm in web browser
+connect to WattOhm in web browser
 ```
 host-ip:8000
 ```
@@ -46,7 +46,7 @@ start WattOhm
 ```bash
 cargo run
 ```
-connect to Wattohm in web browser
+connect to WattOhm in web browser
 ```
 host-ip:8000
 ```
