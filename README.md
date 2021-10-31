@@ -6,11 +6,6 @@ using Rocket as a web framework
 and Diesel for operating on the database
 
 the database used is PostgreSQL
-
-* Rust
-  * Rocket
-  * Diesel
-* PostgreSQL
 ## 
 WattOhm can be used in games (e.g. Monopoly, tabletop RPG)
 
@@ -33,6 +28,7 @@ add needed sql tables (only on first run)
 ```bash
 diesel migration run
 ```
+### With Docker
 build Docker Image (only on first run)
 ```bash
 docker build -t wattohm .
@@ -41,7 +37,15 @@ start WattOhm
 ```bash
 docker run wattohm -d
 ```
-
+connect to Wattohm in web browser
+```
+host-ip:8000
+```
+### Without Docker
+start WattOhm
+```bash
+cargo run
+```
 connect to Wattohm in web browser
 ```
 host-ip:8000
