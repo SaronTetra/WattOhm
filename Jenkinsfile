@@ -18,7 +18,7 @@ pipeline {
 
     stage('build') {
       steps {
-        sh 'cargo build --verbose'
+        sh 'cargo build'
         stash(name: 'cargo-build', includes: 'target/*')
       }
     }
@@ -44,9 +44,6 @@ pipeline {
     }
 
     stage('build-image') {
-      when {
-        branch 'master'
-      }
       steps {
         withCredentials(bindings: [usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'HUB_USER', passwordVariable: 'HUB_TOKEN')]) {
           sh '''
@@ -60,9 +57,6 @@ pipeline {
     }
 
     stage('deploy') {
-      when {
-        branch 'master'
-      }
       steps {
         withCredentials(bindings: [string(credentialsId: 'vpsIP', variable: 'VPS_IP')]) {
           sh '''
