@@ -1,12 +1,13 @@
 pipeline {
-  agent {
-    docker {
-      image 'rust:latest'
-    }
-
-  }
+  agent any
   stages {
     stage('lint') {
+      agent {
+        docker {
+          image 'rust:latest'
+        }
+
+      }
       steps {
         sh 'rustup --version'
         sh 'rustc --version'
@@ -17,6 +18,12 @@ pipeline {
     }
 
     stage('build') {
+      agent {
+        docker {
+          image 'rust:latest'
+        }
+
+      }
       steps {
         sh 'cargo build'
         stash(name: 'cargo-build', includes: 'target/*')
@@ -26,6 +33,12 @@ pipeline {
     stage('test') {
       parallel {
         stage('test-code') {
+          agent {
+            docker {
+              image 'rust:latest'
+            }
+
+          }
           steps {
             unstash 'cargo-build'
             sh 'cargo test --verbose'
@@ -33,6 +46,12 @@ pipeline {
         }
 
         stage('clippy') {
+          agent {
+            docker {
+              image 'rust:latest'
+            }
+
+          }
           steps {
             unstash 'cargo-build'
             sh 'rustup component add clippy'
