@@ -1,12 +1,13 @@
 pipeline {
-  agent {
-    docker {
-      image 'rust:latest'
-    }
-
-  }
+  agent any
   stages {
     stage('lint') {
+      agent {
+        docker {
+          image 'rust:latest'
+        }
+
+      }
       steps {
         sh 'rustup --version'
         sh 'rustc --version'
@@ -17,8 +18,14 @@ pipeline {
     }
 
     stage('build') {
+      agent {
+        docker {
+          image 'rust:latest'
+        }
+
+      }
       steps {
-        sh 'cargo build --verbose'
+        sh 'cargo build'
         stash(name: 'cargo-build', includes: 'target/*')
       }
     }
@@ -26,6 +33,12 @@ pipeline {
     stage('test') {
       parallel {
         stage('test-code') {
+          agent {
+            docker {
+              image 'rust:latest'
+            }
+
+          }
           steps {
             unstash 'cargo-build'
             sh 'cargo test --verbose'
@@ -33,11 +46,49 @@ pipeline {
         }
 
         stage('clippy') {
+          agent {
+            docker {
+              image 'rust:latest'
+            }
+
+          }
           steps {
             unstash 'cargo-build'
             sh 'rustup component add clippy'
             sh 'cargo clippy -- -D warnings'
           }
+        }
+
+      }
+    }
+
+    stage('build-image') {
+      when {
+        branch 'master'
+      }
+      steps {
+        withCredentials(bindings: [usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'HUB_USER', passwordVariable: 'HUB_TOKEN')]) {
+          sh '''
+                        docker login -u $HUB_USER -p $HUB_TOKEN 
+                        docker build -t $HUB_USER/wattohm .
+                        docker image push $HUB_USER/wattohm
+                    '''
+        }
+
+      }
+    }
+
+    stage('deploy') {
+      when {
+        branch 'master'
+      }
+      steps {
+        withCredentials(bindings: [string(credentialsId: 'vpsIP', variable: 'VPS_IP')]) {
+          sh '''
+              ssh deploy@$VPS_IP "cd ~/docker/wattohm &&
+              docker-compose pull &&
+              docker-compose up --force-recreate -d"
+          '''
         }
 
       }
