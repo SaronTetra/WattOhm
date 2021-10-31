@@ -2,7 +2,7 @@
 
 WattOhm is a bank simulator written in Rust
 
-it uses Rocket as a web framework
+using Rocket as a web framework
 and Diesel for operating on the database
 
 the database used is PostgreSQL
