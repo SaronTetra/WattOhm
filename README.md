@@ -12,7 +12,7 @@ the database used is PostgreSQL
   * Diesel
 * PostgreSQL
 ## 
-Wattohm is meant to be used in games (e.g. Monopoly)
+WattOhm can be used in games (e.g. Monopoly, tabletop RPG)
 
 as a mean of easier management of the in-game economy
 
