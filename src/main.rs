@@ -15,7 +15,7 @@ fn db(id: i32) -> String {
 }
 
 #[get("/")]
-fn cardgen() -> String{
+fn cardgen() -> String {
     let number:String=card::numbergen::generate();
     format!("Card number: {0}", number)
 }

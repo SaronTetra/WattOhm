@@ -1,2 +1,2 @@
-pub mod numbergen;
 pub mod inttovec;
+pub mod numbergen;
