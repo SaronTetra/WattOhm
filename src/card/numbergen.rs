@@ -3,7 +3,6 @@ use rand::Rng;
 
 pub fn generate() -> String {
     let mut rng = rand::thread_rng();
-
     let mut card: String = String::new();
     let mut number: Vec<u8> = vec![5, 3, 2, 3, 1, 5]; //532315 - WattOhm Issuer Identification Number (IIN)
 
@@ -20,6 +19,7 @@ pub fn generate() -> String {
     i = 2;
     x = 0;
     let mut y: u8;
+    number.reverse();
     for &digit in &number {
         y = digit * i;
 
@@ -38,12 +38,12 @@ pub fn generate() -> String {
         }
     }
     y = 10 - (x % 10);
+    number.reverse();
     number.push(y);
 
     // transform number:Vec to String
     for digit in number {
         card += &digit.to_string();
     }
-
-    return card;
+    card
 }
