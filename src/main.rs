@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate rocket;
+
 mod card;
 
 // extern crate diesel
@@ -16,7 +17,7 @@ fn db(id: i32) -> String {
 
 #[get("/")]
 fn cardgen() -> String {
-    let number:String=card::numbergen::generate();
+    let number: String = card::numbergen::generate();
     format!("Card number: {0}", number)
 }
 

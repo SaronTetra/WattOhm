@@ -1,4 +1,3 @@
-
 pub fn number_to_vec(n: u8) -> Vec<u8> {
     let mut digits: Vec<u8> = Vec::new();
     let mut n: u8 = n;

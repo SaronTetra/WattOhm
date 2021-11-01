@@ -1,5 +1,5 @@
-use rand::Rng;
 use crate::card::inttovec::number_to_vec;
+use rand::Rng;
 
 pub fn generate() -> String {
     let mut rng = rand::thread_rng();
