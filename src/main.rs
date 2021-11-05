@@ -2,17 +2,56 @@
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate rocket_sync_db_pools;
 
-use crate::post::model::Post;
-use diesel::prelude::*;
+use rocket::response::Debug;
 use rocket::serde::{json::Json, Deserialize, Serialize};
 use rocket_sync_db_pools::database;
 
-pub mod post;
-mod schema;
+use self::diesel::prelude::*;
 
 #[database("postgres")]
 struct DbConnection(diesel::PgConnection);
+
+type Result<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
+
+#[derive(Serialize, Deserialize, Queryable)]
+#[serde(crate = "rocket::serde")]
+struct Post {
+    #[serde(skip_deserializing)]
+    id: Option<i32>,
+    title: String,
+    text: String,
+    #[serde(skip_deserializing)]
+    published: bool,
+}
+
+table! {
+    posts (id) {
+        id -> Nullable<Int4>,
+        title -> Varchar,
+        body -> Text,
+        published -> Bool,
+    }
+}
+
+// #[get("/db")]
+// async fn list(db: DbConnection) -> Result<Json<Vec<Option<i32>>>> {
+//     let ids: Vec<Option<i32>> = db
+//         .run(move |c| posts::table.select(posts::id).load(c))
+//         .await?;
+//
+//     Ok(Json(ids))
+// }
+
+#[get("/<id>")]
+async fn read(db: DbConnection, id: i32) -> Option<Json<Post>> {
+    db.run(move |conn| posts::table.filter(posts::id.eq(id)).first(conn))
+        .await
+        .map(Json)
+        .ok()
+}
 
 #[get("/")]
 fn world() -> &'static str {
@@ -24,27 +63,11 @@ fn db(id: i32) -> String {
     format!("id:{0}", id)
 }
 
-#[get("/post/<post_id>")]
-async fn get_post_db(conn: DbConnection, post_id: i32) -> Result<Post, diesel::result::Error> {
-    // conn.run(|c| posts::filter(published.eq(true))).await
-    // conn.run(|c| posts::filter(posts::id.eq(post_id))).await
-    use crate::schema::posts::dsl::*;
-    conn.run(|c| {
-        schema::posts::table
-            .filter(published.eq(true))
-            .first(c)
-            .unwrap()
-    })
-    .await
-    // conn.run(|c| posts.filter(post_id.eq(&id)).load(c)).await
-    // diesel::select(posts.filter(id.eq(post_id)))
-}
-
 #[allow(unused_must_use)]
 #[rocket::main]
 async fn main() {
     rocket::build()
-        .mount("/", routes![world])
+        .mount("/", routes![world, read])
         .mount("/db", routes![db])
         .attach(DbConnection::fairing())
         .launch()
