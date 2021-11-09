@@ -26,7 +26,7 @@ pipeline {
       }
       steps {
         sh 'cargo build'
-        stash(name: 'cargo-build', includes: 'target/*')
+        stash(name: 'cargo-build', includes: 'target/**/*')
       }
     }
 
@@ -41,7 +41,7 @@ pipeline {
           }
           steps {
             unstash 'cargo-build'
-            sh 'cargo test --verbose'
+            sh 'cargo test'
           }
         }
 
