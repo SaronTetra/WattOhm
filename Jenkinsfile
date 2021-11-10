@@ -24,6 +24,13 @@ pipeline {
         }
 
       }
+      when {
+        anyOf {
+          changeRequest target: 'master'
+          branch 'master'
+        }
+
+      }
       steps {
         sh 'cargo build'
         stash(name: 'cargo-build', includes: 'target/**/*')
@@ -31,6 +38,13 @@ pipeline {
     }
 
     stage('test') {
+      when {
+        anyOf {
+          changeRequest target: 'master'
+          branch 'master'
+        }
+
+      }
       parallel {
         stage('test-code') {
           agent {
