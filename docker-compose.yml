@@ -11,5 +11,9 @@ services:
         - postgres-data:/var/lib/postgresql/data
       ports:
         - '5432:5432'
+  wattohm:
+    image: sarontetra/wattohm
+    ports:
+      - '8000:8000'
 volumes:
   postgres-data:

@@ -1,19 +1,16 @@
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate diesel;
 
+use rocket_sync_db_pools::database;
 mod card;
 
-// extern crate diesel
+mod posts;
+use crate::posts::handlers::*;
 
-#[get("/")]
-fn world() -> &'static str {
-    "Hello, world!"
-}
-
-#[get("/<id>")]
-fn db(id: i32) -> String {
-    format!("id:{0}", id)
-}
+#[database("postgres")]
+pub struct DbConnection(diesel::PgConnection);
 
 #[get("/")]
 fn cardgen() -> String {
@@ -25,9 +22,10 @@ fn cardgen() -> String {
 #[rocket::main]
 async fn main() {
     rocket::build()
-        .mount("/", routes![world])
-        .mount("/db", routes![db])
+        .mount("/", routes![world,])
+        .mount("/db", routes![list, read])
         .mount("/card", routes![cardgen])
+        .attach(DbConnection::fairing())
         .launch()
         .await;
 }

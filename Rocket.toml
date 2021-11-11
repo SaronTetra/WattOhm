@@ -1,3 +1,7 @@
 [default]
 address = "0.0.0.0"
-port = 8000
+port = 8080
+
+[global.databases]
+
+postgres = { url = "postgres://admin:uhncrtdesw89o8gtfg53e46juy8i9ortl8@localhost:5432/wattohm" }
