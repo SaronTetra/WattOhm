@@ -24,7 +24,7 @@ async fn main() {
     rocket::build()
         .mount("/", routes![world,])
         .mount("/db", routes![list, read])
-         .mount("/card", routes![cardgen])
+        .mount("/card", routes![cardgen])
         .attach(DbConnection::fairing())
         .launch()
         .await;
