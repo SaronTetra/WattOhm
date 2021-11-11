@@ -18,4 +18,6 @@ FROM debian:bullseye-slim AS runtime
 WORKDIR app
 COPY --from=builder /app/target/release/wattohm .
 COPY --from=builder /app/Rocket.toml .
+RUN apt update
+RUN apt install libpq-dev -y
 CMD ["./wattohm"]
